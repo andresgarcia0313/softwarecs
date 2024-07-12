@@ -48,52 +48,24 @@ sudo sysctl fs.inotify.max_user_instances=512
 
 ## El navegador web pone error de SSL al ejecutar proyecto .NET Core MVC en Ubuntu
 
-**Explicación del Error:**
+**Explicación:**
 Cuando intentas ejecutar tu proyecto .NET Core MVC en Ubuntu con HTTPS activado, puedes encontrarte con un error de SSL. Este error ocurre porque el entorno de desarrollo no reconoce el certificado SSL utilizado por tu aplicación como válido, especialmente cuando se utiliza un certificado autofirmado o generado por tu computador que no está en las raíces de confianza del sistema y hay que indicarle que este archivo ssl de comunicación encriptada es valido por que es tu aplicación y funciona perfecto con chrome en futuras versiones se manejara para otros navegadores web
 
 **Script de Solución:**
 
-1. **Generación del Certificado SSL:**
+```bash
+# Instalar dependencias necesarias
+sudo apt-get install -y openssl
 
-   ```bash
-   # Genera un certificado SSL autofirmado utilizando OpenSSL
-   openssl req -x509 -nodes -newkey rsa:2048 -keyout localhost.key -out localhost.crt -days 365
-   ```
+# Crear un certificado autofirmado para desarrollo
+dotnet dev-certs https --clean --import
+dotnet dev-certs https -ep ~/.aspnet/https/aspnetapp.pfx -p password
 
-2. **Agrega el Certificado a las Raíces de Confianza:**
+# Agregar el certificado al almacén de certificados confiables
+sudo mkdir -p /usr/local/share/ca-certificates/extra
+sudo cp ~/.aspnet/https/aspnetapp.crt /usr/local/share/ca-certificates/extra/aspnetapp.crt
+sudo update-ca-certificates
+```
+**Fuente**
 
-   ```bash
-   # Copia el certificado a la carpeta de certificados confiables
-   sudo cp localhost.crt /usr/local/share/ca-certificates/
-
-   # Actualiza los certificados confiables del sistema
-   sudo update-ca-certificates
-   ```
-
-3. **Configuración del Proyecto .NET Core:**
-
-   - Abre tu archivo `launchSettings.json` en la carpeta `Properties` de tu proyecto .NET Core.
-   - Asegúrate de que la configuración de desarrollo (`Development`) esté configurada para usar HTTPS y el certificado generado:
-
-     ```json
-     {
-       "profiles": {
-         "YourProjectName": {
-           "commandName": "Project",
-           "launchBrowser": true,
-           "applicationUrl": "https://localhost:5001",
-           "environmentVariables": {
-             "ASPNETCORE_ENVIRONMENT": "Development"
-           }
-         }
-       }
-     }
-     ```
-
-     - Ajusta `"YourProjectName"` y el puerto según tu configuración específica.
-
-4. **Ejecución del Proyecto:**
-
-   - Al ejecutar tu proyecto .NET Core en Ubuntu, ahora deberías poder acceder a él a través de HTTPS sin errores de certificado SSL.
-
-Este script proporciona los pasos necesarios para generar un certificado SSL autofirmado, agregarlo a las raíces de confianza de Ubuntu y configurar correctamente tu proyecto .NET Core para usar HTTPS, asegurando que se ejecute sin problemas de SSL en tu entorno de desarrollo.
+https://learn.microsoft.com/es-es/aspnet/core/security/enforcing-ssl?view=aspnetcore-8.0&tabs=visual-studio%2Clinux-ubuntu

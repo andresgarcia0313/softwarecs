@@ -16,3 +16,5 @@ localhost.der
 localhost.key
 localhost.pfx
 
+cert.pem
+key.pem
