@@ -20,6 +20,18 @@ dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
 
+# Generación controlador MVC
+
+Este comando genera un controlador llamado UsersController que interactúa con el modelo User previamente creado en User.cs utilizando el contexto de base de datos AppDbContext en un proyecto ASP.NET MVC con SQLite.
+
+``` bash
+dotnet aspnet-codegenerator controller -name UsersController -m User -dc AppDbContext --relativeFolderPath Controllers -udl --referenceScriptLibraries
+```
+
+# Limpiar, Compilar y Ejecutar
+
+dotnet clean && clear && dotnet build && dotnet run
+
 # Defecto al ejecutar y solución:
 
 ## Límite de instancias inotify alcanzado: Error System.IO.IOException
