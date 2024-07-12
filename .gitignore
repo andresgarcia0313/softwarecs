@@ -1,0 +1,18 @@
+# Ignorar directorios generados por .NET
+bin/
+obj/
+
+# Ignorar archivos específicos de SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Ignorar archivos de configuración de desarrollo local
+appsettings.Development.json
+
+# Ignorar archivos de certificados y claves locales (seguridad)
+localhost.crt
+localhost.der
+localhost.key
+localhost.pfx
+
